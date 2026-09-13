@@ -1,4 +1,4 @@
-import { SEED_GALLERIES } from "../data/seed";
+import { JOB_TEMPLATES, SEED_GALLERIES } from "../data/seed";
 
 const KEY = "atelier_galleries_v1";
 const AUTH_KEY = "atelier_admin_ok";
@@ -78,6 +78,28 @@ export function slugify(text) {
 
 export function uid(prefix = "id") {
   return `${prefix}_${Math.random().toString(36).slice(2, 9)}`;
+}
+
+export function createJobPage({ title, client, type, date, password, message }) {
+  const template = JOB_TEMPLATES[type] || JOB_TEMPLATES.Outro;
+  const safeTitle = title.trim();
+  return {
+    id: uid("job"),
+    slug: slugify(`${type} ${safeTitle}`) || uid("trabalho"),
+    title: safeTitle,
+    client: (client || safeTitle).trim(),
+    type,
+    date,
+    password: (password || "").trim(),
+    message: message || template.message,
+    cover: "",
+    expiresAt: "",
+    collections: template.folders.map((name) => ({
+      id: uid("col"),
+      name,
+      photos: [],
+    })),
+  };
 }
 
 export function countPhotos(gallery) {
